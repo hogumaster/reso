@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>사기 경마 게임</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #aaa;
+      color: white;
+      font-family: sans-serif;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    h1 {
+      margin-top: 30px;
+      font-size: 2em;
+      color: #ffeb3b;
+      text-shadow: 2px 2px 4px #000;
+    }
+    #tracks {
+      flex-grow: 0;
+      width: 800px;
+      max-width: 95%;
+    }
+    .track {
+      height: 50px;
+      margin: 10px auto;
+      width: 100%;
+      position: relative;
+      background: #666;
+      border-radius: 10px;
+    }
+    .horse {
+      position: absolute;
+      left: 0;
+      top: 10px;
+      font-size: 30px;
+    }
+    .finish-line {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 10px;
+      background: red;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 1.2em;
+      color: #fff;
+    }
+    #version {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      font-size: 0.9em;
+      color: #ccc;
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 신나는 동물 경마! 🐢🦊🐶🐸🦄</h1>
+  <div id="tracks"></div>
+  <button id="startBtn" onclick="showStartConfirm()">경기 시작!</button>
+  <div id="result"></div>
+  <div id="version">© 2024 HRSys | ver.0.23</div>
+
+  <script>
+    const horseCount = 5;
+    let winnerIndex = Math.floor(Math.random() * horseCount) + 1;
+    const trackLength = 800;
+    const horses = [];
+    const emojis = ['🐢', '🦊', '🐶', '🐸', '🦄'];
+    let results = [];
+
+    function createRace() {
+      const container = document.getElementById('tracks');
+      container.innerHTML = '';
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('startBtn').style.display = 'block';
+      horses.length = 0;
+      results = [];
+      for (let i = 0; i < horseCount; i++) {
+        const track = document.createElement('div');
+        track.className = 'track';
+
+        const finish = document.createElement('div');
+        finish.className = 'finish-line';
+        track.appendChild(finish);
+
+        const horse = document.createElement('div');
+        horse.className = 'horse';
+        horse.innerText = emojis[i];
+        track.appendChild(horse);
+
+        container.appendChild(track);
+        horses.push(horse);
+      }
+    }
+
+    function showStartConfirm() {
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = 0;
+      overlay.style.left = 0;
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(0,0,0,0.6)';
+      overlay.style.display = 'flex';
+      overlay.style.justifyContent = 'center';
+      overlay.style.alignItems = 'center';
+
+      const box = document.createElement('div');
+      box.style.background = '#fff';
+      box.style.padding = '20px';
+      box.style.borderRadius = '10px';
+      box.style.color = '#000';
+      box.innerHTML = `<p>경기를 시작하시겠습니까?</p>
+                        <button onclick="document.body.removeChild(this.parentElement.parentElement); startRace();">네</button>`;
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+    }
+
+    function startRace() {
+      document.getElementById('startBtn').style.display = 'none';
+      let finishedCount = 0;
+      horses.forEach((horse, i) => {
+        let pos = 0;
+        const interval = setInterval(() => {
+          let speed = Math.random() * 5 + 1;
+          if (i === winnerIndex - 1) {
+            speed += Math.random() * 3;
+          }
+          pos += speed;
+          if (pos >= trackLength) {
+            pos = trackLength;
+            clearInterval(interval);
+            horse.style.left = `${pos}px`;
+            results.push({ index: i, emoji: emojis[i] });
+            finishedCount++;
+            if (finishedCount === horseCount) showResults();
+            return;
+          }
+          horse.style.left = `${pos}px`;
+        }, 30);
+      });
+    }
+
+    function showResults() {
+      const resultBox = document.getElementById('result');
+      resultBox.innerHTML = '';
+
+      const resetBtn = document.createElement('button');
+      resetBtn.innerText = '초기화';
+      resetBtn.style.marginBottom = '10px';
+      resetBtn.onclick = function () {
+        winnerIndex = Math.floor(Math.random() * horseCount) + 1;
+        document.getElementById('version').innerText = `© 2024 HRSys | ver.0.23${winnerIndex}`;
+        createRace();
+      };
+
+      resultBox.appendChild(resetBtn);
+
+      const title = document.createElement('h2');
+      title.innerText = '🏁 경기 결과';
+      resultBox.appendChild(title);
+
+      results.forEach((r, idx) => {
+        const line = document.createElement('div');
+        line.innerText = `${idx + 1}등: ${r.emoji}`;
+        resultBox.appendChild(line);
+      });
+    }
+
+    document.getElementById('version').innerText = `© 2024 HRSys | ver.0.23${winnerIndex}`;
+    createRace();
+  </script>
+</body>
+</html>
