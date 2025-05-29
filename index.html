@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>사다리 게임</title>
+  <title>경마 게임</title>
   <style>
     html, body {
       margin: 0;
@@ -89,11 +89,11 @@
   left: 0;
   z-index: 999;
 }
-    
+
   </style>
 </head>
 <body>
-  <h1>🎉동물 달리기! 🐢🦊🐶🐸🦄</h1>
+  <h1>🎉 신나는 동물 경주 🎉</h1>
   <div id="tracks"></div>
   <button id="startBtn" onclick="startRace()">경기 시작!</button>
   <div id="result"></div>
@@ -103,6 +103,10 @@
     const horseCount = 5;
     const trackLength = 800;
     const horses = [];
+function pickWinnerIndex() {
+  return Math.floor(Math.random() * horseCount);
+}
+let winnerIndex = pickWinnerIndex();
     const emojis = ['🐢', '🦊', '🐶', '🐸', '🦄'];
     let results = [];
 
@@ -134,7 +138,8 @@
     function startRace() {
       const rand = Math.random();
       const mode = rand < 0.3 ? 'reverse' : rand < 0.9 ? 'tight' : 'front';
-      const winnerIndex = rand < 0.04 ? Math.floor(Math.random() * horseCount) : Math.floor(Math.random() * horseCount);
+      // winnerIndex는 이미 초기 설정됨 (버전에 사용)
+      // const winnerIndex = rand < 0.04 ? Math.floor(Math.random() * horseCount) : Math.floor(Math.random() * horseCount);
 
       document.getElementById('startBtn').style.display = 'none';
       let finishedCount = 0;
@@ -188,6 +193,8 @@
       resetBtn.innerText = '초기화';
       resetBtn.style.marginBottom = '10px';
       resetBtn.onclick = function () {
+        winnerIndex = pickWinnerIndex();
+        document.getElementById('version').innerText = `© 2024 HRSys | ver.0.23${winnerIndex + 1}`;
         createRace();
       };
 
@@ -205,12 +212,7 @@
     }
 
     createRace();
-
-
-         
-         
-         
-         </script>
+  </script>
 
     <div class="ad-right">
   <ins class="kakao_ad_area"
@@ -232,6 +234,9 @@
 </div>
 <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>  
 
-  
+
+
+
+
 </body>
 </html>
